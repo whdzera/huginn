@@ -1,16 +1,15 @@
 class AddUsernameToUsers < ActiveRecord::Migration[4.2]
-  class User < ActiveRecord::Base
-  end
-
   def up
     add_column :users, :username, :string
 
-    User.find_each do |user|
-      user.update_attribute :username, user.email.gsub(/@.*$/, '')
-    end
+    execute <<-SQL
+      UPDATE users
+      SET username = regexp_replace(email, '@.*$', '')
+    SQL
 
-    change_column :users, :username, :string, :null => false
-    add_index :users, :username, :unique => true
+    change_column :users, :username, :string, null: false
+
+    add_index :users, :username, unique: true
   end
 
   def down

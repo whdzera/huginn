@@ -1,21 +1,9 @@
 class ConvertEfaSkipAgent < ActiveRecord::Migration[4.2]
   def up
-    Agent.where(type: 'Agents::EventFormattingAgent').each do |agent|
-      agent.options_will_change!
-      unless agent.options.delete('skip_agent').to_s == 'true'
-        agent.options['instructions'] = {
-          'agent' => '{{agent.type}}'
-        }.update(agent.options['instructions'] || {})
-      end
-      agent.save!
-    end
+    say "Skipped conversion of EventFormattingAgent in migration. Run rake huginn:convert_efa_skip_agent after setup."
   end
 
   def down
-    Agent.where(type: 'Agents::EventFormattingAgent').each do |agent|
-      agent.options_will_change!
-      agent.options['skip_agent'] = (agent.options['instructions'] || {})['agent'] == '{{agent.type}}'
-      agent.save!
-    end
+    say "Skipped rollback of EventFormattingAgent conversion."
   end
 end
